@@ -6,10 +6,11 @@ from init import Init
 
 
 def start_client():
-    client = BotClient.instance().get_client()
+    bot = BotClient.instance()
     Init()
-    client.add_message_handler()
-    client.start_polling()
+    
+    bot.add_message_handler()
+    bot.get_client().start_polling()
     Logger.instance().info('[BotClient] Bot started successfully.')
 
 if __name__ == '__main__':
