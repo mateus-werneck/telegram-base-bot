@@ -14,10 +14,15 @@ class Logger(AbstractSingleton):
         self.logger.setLevel(logging.INFO)
 
     def set_file_handler(self):
+        stream_handler = logging.StreamHandler()
         file_handler = logging.FileHandler(self.get_file_name(), encoding='utf-8')
-        formatter = logging.Formatter("%(asctime)s %(levelname)-8s %(message)s")
+        
+        formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
         file_handler.setFormatter(formatter)
+        stream_handler.setFormatter(formatter)
+        
         self.logger.addHandler(file_handler)
+        self.logger.addHandler(stream_handler)
 
     def get_file_name(self):
         return f"{os.environ['LOG_FOLDER']}/{os.environ['LOG_FILE']}"
