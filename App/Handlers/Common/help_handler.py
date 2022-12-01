@@ -12,5 +12,8 @@ class HelpHandler(AbstractHandlerRequest):
         return [self.help]
 
     def help(self):
-        message = get_startup_message()
+        message = self.get_startup_message()
         BotChat.instance().send_text(message)
+
+    def get_startup_message(self):
+        return ''

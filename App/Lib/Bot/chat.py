@@ -17,10 +17,10 @@ class BotChat(AbstractSingleton):
         chat_id = self.get_bot_context().get_chat_id()
         telegram_bot.send_message(chat_id, message)
 
-    def send_callback_query(self, reply_markup: dict, text: str = ''):
+    def send_callback_query(self, title: str, reply_markup: dict):
         telegram_bot = self.get_bot_context().get_bot()
         chat_id = self.get_bot_context().get_chat_id()
-        telegram_bot.send_message(chat_id, text, reply_markup)
+        telegram_bot.send_message(chat_id, text=title, reply_markup=reply_markup)
 
     def delete_message(self):
         telegram_bot = self.get_bot_context().get_bot()

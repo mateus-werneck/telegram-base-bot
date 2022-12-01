@@ -1,18 +1,3 @@
-
-def get_startup_message():
-    return 'Comandos disponíveis:\n'\
-        + '/agenda -  Para visualizar todas as opções.\n'\
-        + '/tarefas - Para visualizar opções de tarefas.\n' \
-        + '/turmas - Para visualizar opções de turma.\n' \
-        + '/cronograma - Para visualizar opções de cronograma.'
-
-def get_file_processing_message():
-    return loading_icon() + ' Processando seu arquivo.'
-
-def get_failed_message():
-    return 'Algo deu errado. Tente Novamente ' + down_face()
-
-
 def loading_icon():
     return '\U0001F504'
 

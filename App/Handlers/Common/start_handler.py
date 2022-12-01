@@ -12,6 +12,8 @@ class StartHandler(AbstractHandlerRequest):
         return [self.start]
 
     def start(self):
-        message = 'Bem-vindo a sua agenda.'
+        message = self.get_startup_message()
         BotChat.instance().send_text(message)
-        BotChat.instance().send_text(get_startup_message())
+    
+    def get_startup_message(self):
+        return ''

@@ -103,3 +103,8 @@ class AbstractHandlerRequest(ABC):
 
     def get_handler_name(self):
         return self.__class__.__name__
+
+    def clear_all(self):
+        for instance in list(self.__instances):
+            if instance != 'ResetHandler':
+                del self.__instances[instance]
