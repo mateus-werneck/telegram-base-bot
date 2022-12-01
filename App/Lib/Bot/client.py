@@ -37,7 +37,7 @@ class BotClient(AbstractSingleton):
     def __add_message_handler(self):
         self.get_dispatcher()\
             .add_handler(MessageHandler(Filters.text, self.reply_message))
-
+            
     def add_command_handler(self, command: str, callback_function:
                             Callable[[Update, CallbackContext], None]):
         self.get_dispatcher()\
