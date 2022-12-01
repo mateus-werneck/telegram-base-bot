@@ -18,6 +18,9 @@ class Init:
             handler.instance()
         
     def set_handlers(self):
+        if not os.path.exists(self.namespace):
+            return
+        
         for content in os.listdir(self.namespace):
             if content.find('pycache') != -1:
                 continue
