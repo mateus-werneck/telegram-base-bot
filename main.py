@@ -8,5 +8,6 @@ def start_client():
         .start_polling()
     Logger.instance().info('[BotClient] Bot started successfully.')
 
+
 if __name__ == '__main__':
     start_client()

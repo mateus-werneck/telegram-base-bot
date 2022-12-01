@@ -16,11 +16,12 @@ class BotContext(AbstractSingleton):
         self.context = None
 
     def init(self, update: Update = None, context: CallbackContext = None):
-        if update is None and context is None:
-            return
-        self.set_update(update)
-        self.set_context(context)
-        self.check_user_has_permission()
+        if update is not None:
+            self.set_update(update)
+        if context is not None:
+            self.set_context(context)
+        if update is not None and context is not None:
+            self.check_user_has_permission()
 
     def get_update(self) -> Update:
         return self.update
@@ -33,10 +34,11 @@ class BotContext(AbstractSingleton):
 
     def set_context(self, context: CallbackContext):
         self.context = context
-    
+
     def check_user_has_permission(self):
         allowed = os.environ['ALLOWED_USERS'].split(',')
         chat_id = self.get_chat_id()
+        Logger.instance().info(f'[BotContext] Authenticating User {str(chat_id)}')
 
         if str(chat_id) in allowed:
             return
@@ -50,12 +52,12 @@ class BotContext(AbstractSingleton):
         context = self.get_context()
         chat_id, data = context._chat_id_and_data
         return chat_id
-    
+
     def get_message_id(self):
         update = self.get_update()
         message = getattr(update, 'message')
-        
+
         if hasattr(update, 'callback_query'):
             message = update.callback_query.message
-            
+
         return getattr(message, 'message_id', 0)
