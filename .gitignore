@@ -1,0 +1,8 @@
+*.pyc
+__pycache__/
+*.cache
+downloads/
+.vscode/
+*.log
+*.env
+logs/

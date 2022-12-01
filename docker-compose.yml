@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  marina-scheduler-v2:
+    build: .
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - .env
+    volumes:
+      - /home/mateuswerneck/Documents/Telegram-Bot/logs:/telegram_logs
