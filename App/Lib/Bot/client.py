@@ -58,8 +58,11 @@ class BotClient(AbstractSingleton):
         if BotMode.instance().has_mode():
             mode = BotMode.instance().get_mode()
             mode.execute()
-            
-        BotChat.instance().send_text(get_startup_message())
+            return
+
+        message = 'Para continuar escolha uma função.\n'\
+            + '\nSe estiver em duvida digite /help'
+        BotChat.instance().send_text(message)
 
     def format_log(self, message: str):
         class_name = self.__class__.__name__
