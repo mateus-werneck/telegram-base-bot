@@ -13,8 +13,6 @@ ENV LOG_FOLDER ${LOG_FOLDER}
 ENV LOG_FILE ${LOG_FILE}
 ENV MAX_FILE_SIZE ${MAX_FILE_SIZE}
 ENV ALLOWED_USERS ${ALLOWED_USERS}
-ENV MARINA_API ${MARINA_API}
-ENV TZ=America/Sao_Paulo
 
 RUN apt-get update
 RUN apt-get install -y python3 python3-pip python-dev build-essential python3-venv
