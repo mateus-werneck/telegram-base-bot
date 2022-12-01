@@ -4,7 +4,6 @@ import os
 from telegram.ext.callbackcontext import CallbackContext
 from telegram.update import Update
 
-from App.Lib.Bot.chat import BotChat
 from App.Lib.Errors.user_not_allowed_exception import UserNotAllowedException
 from App.Lib.Log.logger import Logger
 from App.Lib.Standard.abstract_singleton import AbstractSingleton
@@ -37,12 +36,26 @@ class BotContext(AbstractSingleton):
     
     def check_user_has_permission(self):
         allowed = os.environ['ALLOWED_USERS'].split(',')
-        chat_id = BotChat.instance().get_chat_id()
+        chat_id = self.get_chat_id()
 
         if str(chat_id) in allowed:
             return
 
         exception = UserNotAllowedException(chat_id)
-        update = BotContext.instance().get_update()
+        update = self.get_update()
         Logger.instance().warning(exception.message, update)
         raise exception
+
+    def get_chat_id(self):
+        context = self.get_context()
+        chat_id, data = context._chat_id_and_data
+        return chat_id
+    
+    def get_message_id(self):
+        update = self.get_update()
+        message = getattr(update, 'message')
+        
+        if hasattr(update, 'callback_query'):
+            message = update.callback_query.message
+            
+        return getattr(message, 'message_id', 0)
