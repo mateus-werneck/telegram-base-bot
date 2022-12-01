@@ -64,9 +64,6 @@ class AbstractHandlerRequest(ABC):
         return steps.index(self.step)
 
     def __handle_step(self):
-        message = f'Executing Handler Step: {self.step.__name__}'
-        Logger.instance().info(self.format_log(message))
-
         try:
             self.step()
             self.save_log()

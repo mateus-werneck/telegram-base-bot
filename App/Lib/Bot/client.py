@@ -9,7 +9,6 @@ from telegram.ext.callbackcontext import CallbackContext
 from telegram.ext.updater import Updater
 from telegram.update import Update
 
-from App.Data.Helpers.message_helper import get_startup_message
 from App.Lib.Bot.chat import BotChat
 from App.Lib.Bot.context import BotContext
 from App.Lib.Bot.mode import BotMode
@@ -23,7 +22,7 @@ class BotClient(AbstractSingleton):
         self.updater = None
 
         self.__set_client()
-        self.__add_message_handler()
+        # self.__add_message_handler()
 
     def get_client(self) -> Updater:
         return self.updater
@@ -34,12 +33,11 @@ class BotClient(AbstractSingleton):
         token = os.environ.get('API_TOKEN')
         self.updater = Updater(token, use_context=True, defaults=defaults)
 
-    def __add_message_handler(self):
+    def add_message_handler(self):
         self.get_dispatcher()\
             .add_handler(MessageHandler(Filters.text, self.reply_message))
             
-    def add_command_handler(self, command: str, callback_function:
-                            Callable[[Update, CallbackContext], None]):
+    def add_command_handler(self, command: str, callback_function):
         self.get_dispatcher()\
             .add_handler(CommandHandler(command, callback_function))
         message = self.format_log(f'[*] Added CommandHandler for {command}:'
