@@ -59,7 +59,7 @@ class BotClient(AbstractSingleton):
             mode = BotMode.instance().get_mode()
             mode.execute()
         
-        BotChat.send_text(get_startup_message())
+        BotChat.instance().send_text(get_startup_message())
 
     def format_log(self, message: str):
         class_name = self.__class__.__name__
