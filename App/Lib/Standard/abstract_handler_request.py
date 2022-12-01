@@ -1,8 +1,13 @@
 from abc import ABC, abstractmethod
 from traceback import format_exc
 
+from telegram.ext.callbackcontext import CallbackContext
+from telegram.update import Update
+
 from App.Lib.Bot.client import BotClient
+from App.Lib.Bot.context import BotContext
 from App.Lib.Bot.mode import BotMode
+from App.Lib.Errors.user_not_allowed_exception import UserNotAllowedException
 from App.Lib.Log.logger import Logger
 
 
@@ -36,7 +41,12 @@ class AbstractHandlerRequest(ABC):
     def __set_bot_mode(self):
         BotMode.instance().set_mode(self)
 
-    def execute(self):
+    def execute(self, update: Update = None, context: CallbackContext = None):
+        try:
+            BotContext.instance().init(update, context)
+        except UserNotAllowedException:
+            return
+
         self.__set_bot_mode()
         self.next()
         self.__handle_step()
@@ -63,7 +73,7 @@ class AbstractHandlerRequest(ABC):
             self.finish(True)
 
     def finish(self, force: bool = False):
-        if not self.should_finish(self):
+        if not self.should_finish(force):
             return
         BotMode.instance().clear_mode()
         self.__delete()

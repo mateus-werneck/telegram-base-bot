@@ -9,8 +9,11 @@ from telegram.ext.callbackcontext import CallbackContext
 from telegram.ext.updater import Updater
 from telegram.update import Update
 
+from App.Data.Helpers.message_helper import get_startup_message
+from App.Lib.Bot.chat import BotChat
 from App.Lib.Bot.context import BotContext
-from App.Lib.Bot.handler import BotHandler
+from App.Lib.Bot.mode import BotMode
+from App.Lib.Errors.user_not_allowed_exception import UserNotAllowedException
 from App.Lib.Log.logger import Logger
 from App.Lib.Standard.abstract_singleton import AbstractSingleton
 
@@ -47,8 +50,16 @@ class BotClient(AbstractSingleton):
         return self.get_client().dispatcher
 
     def reply_message(self, update: Update, context: CallbackContext):
-        BotContext.instance().init(update, context)
-        BotHandler.instance().check_user_has_permission()
+        try:
+            BotContext.instance().init(update, context)
+        except UserNotAllowedException:
+            return
+
+        if BotMode.instance().has_mode():
+            mode = BotMode.instance().get_mode()
+            mode.execute()
+        
+        BotChat.send_text(get_startup_message())
 
     def format_log(self, message: str):
         class_name = self.__class__.__name__
