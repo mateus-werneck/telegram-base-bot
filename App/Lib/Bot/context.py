@@ -47,7 +47,11 @@ class BotContext(AbstractSingleton):
         update = self.get_update()
         Logger.instance().warning(exception.message, update)
         raise exception
-
+    
+    def get_bot(self):
+        context = self.get_context()
+        return context.bot
+    
     def get_chat_id(self):
         context = self.get_context()
         chat_id, data = context._chat_id_and_data

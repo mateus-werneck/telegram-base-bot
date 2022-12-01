@@ -13,20 +13,20 @@ class BotChat(AbstractSingleton):
         return self.bot_context
     
     def send_text(self, message: str):
-        context = self.get_bot_context().get_context()
+        telegram_bot = self.get_bot_context().get_bot()
         chat_id = self.get_bot_context().get_chat_id()
-        context.bot.send_message(chat_id, message)
+        telegram_bot.send_message(chat_id, message)
 
     def send_callback_query(self, reply_markup: dict, text: str = ''):
-        context = self.get_bot_context().get_context()
+        telegram_bot = self.get_bot_context().get_bot()
         chat_id = self.get_bot_context().get_chat_id()
-        context.bot.send_message(chat_id, text, reply_markup)
+        telegram_bot.send_message(chat_id, text, reply_markup)
 
     def delete_message(self):
-        context = self.get_bot_context().get_context()
+        telegram_bot = self.get_bot_context().get_bot()
         message_id = self.get_bot_context().get_message_id()
         chat_id = self.get_bot_context().get_chat_id()
         try:
-            context.bot.delete_message(chat_id, message_id)
+            telegram_bot.delete_message(chat_id, message_id)
         except Exception:
             return
