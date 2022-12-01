@@ -1,4 +1,7 @@
-class BotMode():
+from App.Lib.Standard.abstract_singleton import AbstractSingleton
+
+
+class BotMode(AbstractSingleton):
     def __init__(self):
         self.mode = None
 
@@ -10,7 +13,6 @@ class BotMode():
 
     def clear_mode(self):
         self.mode = None
-        
+
     def has_mode(self):
         return self.mode is not None
-
