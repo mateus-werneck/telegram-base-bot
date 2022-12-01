@@ -7,7 +7,8 @@ from telegram.update import Update
 from App.Lib.Bot.client import BotClient
 from App.Lib.Bot.context import BotContext
 from App.Lib.Bot.mode import BotMode
-from App.Lib.Errors.user_not_allowed_exception import UserNotAllowedException
+from App.Lib.Errors.Auth.user_not_allowed_exception import \
+    UserNotAllowedException
 from App.Lib.Log.logger import Logger
 
 

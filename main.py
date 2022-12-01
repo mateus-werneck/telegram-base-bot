@@ -7,6 +7,7 @@ from init import Init
 
 def start_client():
     bot = BotClient.instance()
+    
     Init()
     
     bot.add_message_handler()

@@ -4,7 +4,8 @@ import os
 from telegram.ext.callbackcontext import CallbackContext
 from telegram.update import Update
 
-from App.Lib.Errors.user_not_allowed_exception import UserNotAllowedException
+from App.Lib.Errors.Auth.user_not_allowed_exception import \
+    UserNotAllowedException
 from App.Lib.Log.logger import Logger
 from App.Lib.Standard.abstract_singleton import AbstractSingleton
 
