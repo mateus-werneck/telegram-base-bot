@@ -11,6 +11,7 @@ from telegram.update import Update
 
 from App.Lib.Bot.context import BotContext
 from App.Lib.Bot.handler import BotHandler
+from App.Lib.Log.logger import Logger
 from App.Lib.Standard.abstract_singleton import AbstractSingleton
 
 
@@ -38,6 +39,9 @@ class BotClient(AbstractSingleton):
                             Callable[[Update, CallbackContext], None]):
         self.get_dispatcher()\
             .add_handler(CommandHandler(command, callback_function))
+        message = self.format_log(f'[*] Added CommandHandler for {command}:'
+                                  + f'"{callback_function.__name__}"')
+        Logger.instance().info(message)
 
     def get_dispatcher(self) -> Dispatcher:
         return self.get_client().dispatcher
@@ -45,5 +49,7 @@ class BotClient(AbstractSingleton):
     def reply_message(self, update: Update, context: CallbackContext):
         BotContext.instance().init(update, context)
         BotHandler.instance().check_user_has_permission()
-        
 
+    def format_log(self, message: str):
+        class_name = self.__class__.__name__
+        return message.replace('*', class_name)

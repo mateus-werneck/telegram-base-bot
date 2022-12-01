@@ -17,16 +17,11 @@ class AbstractHandler(ABC):
         self.handle()
         return self
 
-    def handle(self):
+    def handle(self) -> bool:
         self.set_next()
-
-        if self.has_finished():
-            return True
-
-        self.__next_handler.handle()
-
-    def has_finished(self):
-        return self.__next_handler is None
+        if not self.has_finished():
+            self.__next_handler.handle()
+        return True
 
     def set_next(self):
         self.__next_handler = self.get_step()
@@ -57,7 +52,7 @@ class AbstractHandler(ABC):
 
         try:
             index = steps.index(current_step) + 1
-        except Exception:
+        except ValueError:
             return 0
 
         if index == len(steps):
@@ -75,3 +70,6 @@ class AbstractHandler(ABC):
     def get_step_class_name(self, step: str):
         name_parts = step.split('_')
         return ''.join([name.capitalize() for name in name_parts])
+
+    def has_finished(self):
+        return self.__next_handler is None
