@@ -69,7 +69,7 @@ class BotClient(AbstractSingleton):
 
         if BotMode.instance().has_mode():
             mode = BotMode.instance().get_mode()
-            mode.execute()
+            mode.instance().execute()
             return
 
         message = 'Para continuar escolha uma função.\n'\

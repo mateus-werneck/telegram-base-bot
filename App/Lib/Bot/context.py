@@ -36,23 +36,10 @@ class BotContext(AbstractSingleton):
     def set_context(self, context: CallbackContext):
         self.context = context
 
-    def check_user_has_permission(self):
-        allowed = os.environ['ALLOWED_USERS'].split(',')
-        chat_id = self.get_chat_id()
-        Logger.instance().info(f'[BotContext] Authenticating User {str(chat_id)}')
-
-        if str(chat_id) in allowed:
-            return
-
-        exception = UserNotAllowedException(chat_id)
-        update = self.get_update()
-        Logger.instance().warning(exception.message, update)
-        raise exception
-    
     def get_bot(self):
         context = self.get_context()
         return context.bot
-    
+
     def get_chat_id(self):
         context = self.get_context()
         chat_id, data = context._chat_id_and_data
@@ -66,3 +53,37 @@ class BotContext(AbstractSingleton):
             message = update.callback_query.message
 
         return getattr(message, 'message_id', 0)
+
+    def check_user_has_permission(self):
+        allowed = os.environ['ALLOWED_USERS'].split(',')
+        chat_id = self.get_chat_id()
+        Logger.instance().info(
+            f'[BotContext] Authenticating User {str(chat_id)}')
+
+        if str(chat_id) in allowed:
+            return
+
+        exception = UserNotAllowedException(chat_id)
+        update = self.get_update()
+        Logger.instance().warning(exception.message, update)
+        raise exception        
+
+    def get_callback_data(self):
+        update = self.get_update()
+        return update.callback_query.data
+    
+    def has_callback_data(self):
+        return hasattr(self.update, 'callback_query')\
+            and hasattr(self.update.callback_query, 'data')
+            
+    def has_go_back_button(self):
+        if not self.has_callback_data():
+            return False
+        callback_data = self.get_callback_data()
+        return callback_data.find('go_back') != -1 
+    
+    def has_exit_button(self):
+        if not self.has_callback_data():
+            return False
+        callback_data = self.get_callback_data()
+        return callback_data.find('exit') != -1 
