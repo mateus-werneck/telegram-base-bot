@@ -4,6 +4,7 @@ from traceback import format_exc
 from telegram.ext.callbackcontext import CallbackContext
 from telegram.update import Update
 
+from App.Lib.Bot.chat import BotChat
 from App.Lib.Bot.client import BotClient
 from App.Lib.Bot.context import BotContext
 from App.Lib.Bot.mode import BotMode
@@ -37,21 +38,68 @@ class AbstractHandlerRequest(ABC):
     def __add_command_handler(self):
         bot = BotClient.instance()
         command = self.get_command()
+        if command == '':
+            return
         bot.add_command_handler(command, self.execute)
 
-    def __set_bot_mode(self):
-        BotMode.instance().set_mode(self)
+    def get_handler_name(self):
+        return self.__class__.__name__
+
+    def get_handlers(self):
+        return list(self.__instances)
+
+    def remove_handler(self, handler: str):
+        del self.__instances[handler]
+        message = self.format_log(f'[*] Removing handler: {handler}')
+        Logger.instance().info(message)
+        
+    def format_log(self, message: str):
+        class_name = self.get_handler_name()
+        return message.replace('*', class_name)
 
     def execute(self, update: Update = None, context: CallbackContext = None):
-        try:
-            BotContext.instance().init(update, context)
-        except UserNotAllowedException:
-            Logger.instance().warning('User not allowed to execute handler.')
+        if not self.__handle_update(update, context):
             return
+
+        if BotContext.instance().has_go_back_button():
+            should_continue = self.go_back()
+            if not should_continue:
+                return self.finish(True)
 
         self.__set_bot_mode()
         self.next()
         self.__handle_step()
+
+    def __handle_update(self, update: Update = None,
+                        context: CallbackContext = None):
+        try:
+            BotContext.instance().init(update, context)
+            return True
+        except UserNotAllowedException:
+            message = self.format_log(
+                '[*] User not allowed to execute handler.')
+            Logger.instance().warning(message)
+            return False
+
+    def go_back(self):
+        message = self.format_log(
+            f'[*] Going back from step: {self.step.__name__}')
+        Logger.instance().info(message)
+
+        if self.is_first_step():
+            BotChat.instance().extract_callback_data()
+            return False
+
+        steps = self.get_steps()
+        self.step = steps[self.get_current_step() - 1]
+        BotChat.instance().extract_callback_data()
+        return True
+
+    def is_first_step(self):
+        return self.get_current_step() == 0
+
+    def __set_bot_mode(self):
+        BotMode.instance().set_mode(self)
 
     def next(self):
         steps = self.get_steps()
@@ -67,21 +115,25 @@ class AbstractHandlerRequest(ABC):
     def __handle_step(self):
         try:
             self.step()
-            self.save_log()
+            self.__save_step_log()
             self.finish()
         except Exception:
             message = f'[*] Failed to execute step: "{self.step.__name__}".'
             Logger.instance().error(self.format_log(message), format_exc())
             self.finish(True)
+            
+    def __save_step_log(self):
+        message = f'[*] Excecuted step: "{self.step.__name__}".'
+        Logger.instance().info(self.format_log(message))
 
     def finish(self, force: bool = False):
         if not self.should_finish(force):
             return
         BotMode.instance().clear_mode()
-        self.__delete()
+        self.__delete_handler()
 
     def should_finish(self, force: bool):
-        if force and not self.is_last_step():
+        if force:
             return True
         return self.is_last_step()
 
@@ -89,22 +141,6 @@ class AbstractHandlerRequest(ABC):
         last_step = self.get_steps().pop()
         return last_step.__name__ == self.step.__name__
 
-    def __delete(self):
-        class_name = self.get_handler_name()
-        del self.__instances[class_name]
-
-    def save_log(self):
-        message = f'[*] Excecuted step: "{self.step.__name__}".'
-        Logger.instance().info(self.format_log(message))
-
-    def format_log(self, message: str):
-        class_name = self.get_handler_name()
-        return message.replace('*', class_name)
-
-    def get_handler_name(self):
-        return self.__class__.__name__
-
-    def clear_all(self):
-        for instance in list(self.__instances):
-            if instance != 'ResetHandler':
-                del self.__instances[instance]
+    def __delete_handler(self):
+        handler = self.get_handler_name()
+        self.remove_handler(handler)
