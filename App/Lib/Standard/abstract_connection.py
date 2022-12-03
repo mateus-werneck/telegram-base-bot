@@ -82,7 +82,7 @@ class Connection(ABC):
         Logger.instance().info(message, context=self)
 
     def __save_request_log(self, request: Request):
-        message = f'{request.method.upper()} Sending request to {request.url}'
+        message = f'[{request.method.upper()}] Sending request to {request.url}'
         self.__save_log(message)
 
     def __save_response_log(self, response: Response):
@@ -90,7 +90,7 @@ class Connection(ABC):
         self.__save_log(message)
         
         data = self.__treat_response_data(response)
-        message = f'Data Received {json.dumps(data)}'
+        message = f'[Data Received] {json.dumps(data)}'
         self.__save_log(message)
 
     def __save_error_log(self, response: dict):
