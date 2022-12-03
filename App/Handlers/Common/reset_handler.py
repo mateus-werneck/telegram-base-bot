@@ -25,7 +25,7 @@ class ResetHandler(AbstractHandlerRequest):
         
         for handler in handlers:
             if handler != 'ResetHandler':
-                self.remove_handler(handler)
+                self.reset_handler(handler)
                 
         self.__save_cleared_handlers(handlers)
     

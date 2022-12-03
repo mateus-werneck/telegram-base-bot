@@ -49,12 +49,11 @@ class AbstractHandlerRequest(ABC):
     def get_handlers(self):
         return list(self.__instances)
 
-    def remove_handler(self, handler: str):
+    def reset_handler(self, handler: str):
         if not self.has_handler(handler):
             return
         self.__instances[handler].step = None
-        del self.__instances[handler]
-        message = f'[*] Removing handler: {handler}'
+        message = f'[*] Reseting handler: {handler}'
         Logger.instance().info(message, context=self)
 
     def has_handler(self, handler:str):
@@ -144,7 +143,7 @@ class AbstractHandlerRequest(ABC):
 
         BotMode.instance().clear_mode()
         handler = self.get_handler_name()
-        self.remove_handler(handler)
+        self.reset_handler(handler)
 
     def should_finish(self, force: bool):
         if force:
