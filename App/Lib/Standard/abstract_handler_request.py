@@ -167,3 +167,5 @@ class AbstractHandlerRequest(ABC):
         data = self.get_text_data()
         return data is not None and data != '' and data
     
+    def get_callback_data(self):
+        return BotContext.instance().get_callback_data()
