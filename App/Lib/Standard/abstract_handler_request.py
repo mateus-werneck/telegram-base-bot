@@ -50,7 +50,7 @@ class AbstractHandlerRequest(ABC):
         return list(self.__instances)
 
     def remove_handler(self, handler: str):
-        if not self.has_handler():
+        if not self.has_handler(handler):
             return
         self.__instances[handler].step = None
         del self.__instances[handler]
