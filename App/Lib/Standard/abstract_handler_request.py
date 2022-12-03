@@ -149,3 +149,17 @@ class AbstractHandlerRequest(ABC):
     def is_mode(self, mode: str):
         answer = BotChat.instance().extract_callback_data()
         return answer == mode
+    
+    def get_logger(self):
+        return Logger.instance()
+    
+    def send_message(self, message: str):
+        BotChat.instance().send_text(message)
+        
+    def get_text_data(self):
+        return BotContext.instance().get_text_data()
+    
+    def has_valid_text_data(self):
+        data = self.get_text_data()
+        return data is not None and data != '' and data
+    
