@@ -30,9 +30,9 @@ class BotChat(AbstractSingleton):
         
         try:
             telegram_bot.delete_message(chat_id, message_id)
-        except Exception:
+        except Exception as e:
             message = f'[*] Failed to delete message: {str(message_id)}'
-            Logger.instance().critical(message, context=self)
+            Logger.instance().critical(message, e, context=self)
             return
 
     def extract_callback_data(self):
@@ -42,5 +42,8 @@ class BotChat(AbstractSingleton):
             return
         
         self.delete_message()
-        return bot_context.get_callback_data()
+        data = bot_context.get_callback_data()
+        message = f'[*] Extracting Callback Data: {str(data)}'
+        Logger.instance().info(message, context=self)
+        return data
         
