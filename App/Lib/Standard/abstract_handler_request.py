@@ -164,6 +164,9 @@ class AbstractHandlerRequest(ABC):
     def send_message(self, message: str):
         BotChat.instance().send_text(message)
         
+    def delete_message(self):
+        BotChat.instance().delete_message()
+    
     def get_text_data(self):
         return BotContext.instance().get_text_data()
     
@@ -173,3 +176,5 @@ class AbstractHandlerRequest(ABC):
     
     def get_callback_data(self):
         return BotChat.instance().extract_callback_data()
+    
+
