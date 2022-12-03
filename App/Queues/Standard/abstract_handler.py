@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
 from importlib import import_module
 
+from App.Lib.Bot.chat import BotChat
+from App.Lib.Bot.context import BotContext
+from App.Lib.Log.logger import Logger
+
 
 class AbstractHandler(ABC):
     __next_handler = None
@@ -73,3 +77,16 @@ class AbstractHandler(ABC):
 
     def has_finished(self):
         return self.__next_handler is None
+
+    def get_logger(self):
+        return Logger.instance()
+    
+    def send_message(self, message: str):
+        BotChat.instance().send_text(message)
+        
+    def get_text_data(self):
+        return BotContext.instance().get_text_data()
+    
+    def has_valid_text_data(self):
+        data = self.get_text_data()
+        return data is not None and data != '' and data
