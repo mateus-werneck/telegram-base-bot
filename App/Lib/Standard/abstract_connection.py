@@ -9,7 +9,7 @@ from App.Lib.Errors.Client.invalid_request_exception import \
 from App.Lib.Log.logger import Logger
 
 
-class ExternalConn(ABC):
+class Connection(ABC):
     __instances = dict()
 
     @classmethod
