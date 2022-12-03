@@ -84,7 +84,7 @@ class AbstractHandlerRequest(ABC):
         if self.bot_context.has_go_back_button():
             return self.go_back()
         elif self.bot_context.has_exit_button():
-            BotChat.instance().delete_message()
+            BotChat.instance().extract_callback_data()
             return False
 
         return True
@@ -155,7 +155,7 @@ class AbstractHandlerRequest(ABC):
         return last_step.__name__ == self.step.__name__
 
     def is_mode(self, mode: str):
-        answer = BotChat.instance().extract_callback_data()
+        answer = BotContext.instance().get_callback_data()
         return answer == mode
     
     def get_logger(self):

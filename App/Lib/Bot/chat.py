@@ -41,9 +41,10 @@ class BotChat(AbstractSingleton):
         if not bot_context.has_callback_data():
             return
         
-        self.delete_message()
-        data = bot_context.get_callback_data()
+        data = bot_context.get_callback_data()        
         message = f'[*] Extracting Callback Data: {str(data)}'
         Logger.instance().info(message, context=self)
+        self.delete_message()
+        
         return data
         
