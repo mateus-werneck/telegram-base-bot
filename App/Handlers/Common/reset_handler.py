@@ -30,10 +30,10 @@ class ResetHandler(AbstractHandlerRequest):
         self.__save_cleared_handlers(handlers)
     
     def __save_active_handlers(self, handlers: list):
-        message = self.format_log('[*] Active handlers found: {handlers}')
-        Logger.instance().info(message.format(handlers=handlers))
+        message = f'[*] Active handlers found: {handlers}'
+        Logger.instance().info(message, context=self)
 
     def __save_cleared_handlers(self, handlers: list):
         cleared = str(len(handlers))
-        message = self.format_log(f'[*] Cleared all {cleared} active handlers')
-        Logger.instance().info(message)
+        message = f'[*] Cleared all {cleared} active handlers'
+        Logger.instance().info(message, context=self)

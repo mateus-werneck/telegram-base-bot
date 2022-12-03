@@ -52,12 +52,8 @@ class AbstractHandlerRequest(ABC):
     def remove_handler(self, handler: str):
         self.__instances[handler].step = None
         del self.__instances[handler]
-        message = self.format_log(f'[*] Removing handler: {handler}')
-        Logger.instance().info(message)
-
-    def format_log(self, message: str):
-        class_name = self.get_handler_name()
-        return message.replace('*', class_name)
+        message = f'[*] Removing handler: {handler}'
+        Logger.instance().info(message, context=self)
 
     def execute(self, update: Update = None, context: CallbackContext = None):
         if not self.__handle_update(update, context):
@@ -76,9 +72,8 @@ class AbstractHandlerRequest(ABC):
             self.bot_context.init(update, context)
             return True
         except UserNotAllowedException:
-            message = self.format_log(
-                '[*] User not allowed to execute handler.')
-            Logger.instance().warning(message)
+            message = '[*] User not allowed to execute handler.'
+            Logger.instance().warning(message, context=self)
             return False
 
     def __should_execute_next_step(self) -> bool:
@@ -91,9 +86,8 @@ class AbstractHandlerRequest(ABC):
         return True
 
     def go_back(self) -> bool:
-        message = self.format_log(
-            f'[*] Going back from step: {self.step.__name__}')
-        Logger.instance().info(message)
+        message = f'[*] Going back from step: {self.step.__name__}'
+        Logger.instance().info(message, context=self)
 
         if self.is_first_step():
             BotChat.instance().extract_callback_data()
@@ -128,12 +122,12 @@ class AbstractHandlerRequest(ABC):
             self.finish()
         except Exception:
             message = f'[*] Failed to execute step: "{self.step.__name__}".'
-            Logger.instance().error(self.format_log(message), format_exc())
+            Logger.instance().error(message, format_exc(), context=self)
             self.finish(True)
 
     def __save_step_log(self):
         message = f'[*] Excecuted step: "{self.step.__name__}".'
-        Logger.instance().info(self.format_log(message))
+        Logger.instance().info(message, context=self)
 
     def finish(self, force: bool = False):
         if not self.should_finish(force):
@@ -151,3 +145,7 @@ class AbstractHandlerRequest(ABC):
     def is_last_step(self):
         last_step = self.get_steps().pop()
         return last_step.__name__ == self.step.__name__
+
+    def is_mode(self, mode: str):
+        answer = BotChat.instance().extract_callback_data()
+        return answer == mode

@@ -42,9 +42,9 @@ class BotClient(AbstractSingleton):
         command_handler = CommandHandler(command, callback_function)
         self.get_dispatcher().add_handler(command_handler)
 
-        message = self.format_log(f'[*] Added CommandHandler for {command}:'
-                                  + f'"{callback_function.__name__}"')
-        Logger.instance().info(message)
+        message = f'[*] Added CommandHandler for {command}:'\
+                                  + f'"{callback_function.__name__}"'
+        Logger.instance().info(message, context=self)
 
     def add_callback_handler(self, menu: dict, callback_function):
         for line in menu['inline_keyboard']:
@@ -57,9 +57,9 @@ class BotClient(AbstractSingleton):
 
         self.get_dispatcher().add_handler(callback_handler)
 
-        message = self.format_log(f"Added CallbackHandler for \
-                    {button['callback_data']}: {callback_function.__name__}")
-        Logger.instance().info(message)
+        message = f"Added CallbackHandler for \
+                    {button['callback_data']}: {callback_function.__name__}"
+        Logger.instance().info(message, context=self)
 
     def reply_message(self, update: Update, context: CallbackContext):
         try:
@@ -75,7 +75,3 @@ class BotClient(AbstractSingleton):
         message = 'Para continuar escolha uma função.\n'\
             + '\nSe estiver em duvida digite /help'
         BotChat.instance().send_text(message)
-
-    def format_log(self, message: str):
-        class_name = self.__class__.__name__
-        return message.replace('*', class_name)
