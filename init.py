@@ -33,6 +33,8 @@ class Init:
         for sub_content in os.listdir(content):
             if content.find('pycache') != -1:
                 continue
+            elif content.find('Standard') != -1:
+                continue
             sub_content = f'{content}/{sub_content}'
             self.handle_file(sub_content)
         

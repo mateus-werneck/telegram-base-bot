@@ -23,7 +23,7 @@ class Connection(ABC):
         self.client = None
         self.headers = dict()
         self.request = None
-        
+
         self.set_client()
 
     @abstractmethod
@@ -52,7 +52,7 @@ class Connection(ABC):
         self.set_request('GET', route, None, query_params)
         return self.__send()
 
-    def post(self, route: str, body = None):
+    def post(self, route: str, body=None):
         self.set_request('POST', route, body)
         return self.__send()
 
@@ -79,16 +79,20 @@ class Connection(ABC):
         return self.__treat_response_data(response)
 
     def __save_log(self, message: str):
+        message = f'[*] {message}'
         Logger.instance().info(message, context=self)
 
     def __save_request_log(self, request: Request):
         message = f'[{request.method.upper()}] Sending request to {request.url}'
         self.__save_log(message)
 
+        if request.json:
+            self.__save_log(f'Data sent: {str(request.json)}')
+
     def __save_response_log(self, response: Response):
         message = f'{response.status_code} Received response from {response.url}'
         self.__save_log(message)
-        
+
         data = self.__treat_response_data(response)
         message = f'[Data Received] {json.dumps(data)}'
         self.__save_log(message)

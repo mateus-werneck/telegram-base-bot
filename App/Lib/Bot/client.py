@@ -73,5 +73,5 @@ class BotClient(AbstractSingleton):
             return
 
         message = 'Para continuar escolha uma função.\n'\
-            + '\nSe estiver em duvida digite /help'
+            + '\nSe estiver em duvida digite /ajuda'
         BotChat.instance().send_text(message)

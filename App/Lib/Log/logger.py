@@ -49,7 +49,7 @@ class Logger(AbstractSingleton):
         callback(message)
         [callback(additional) for additional in args]
 
-    def format_log(self, message: str, formatting: dict):
+    def __format_log(self, message: str, formatting: dict):
         if formatting.get('context'):
             context_name = formatting.get('context').__class__.__name__
             message = message.replace('*', context_name)

@@ -18,13 +18,25 @@ class AbstractHandler(ABC):
         pass
 
     def init(self):
+        self.get_logger().info(
+            '[AbstractHandler] Started Queue: *', context=self)
         self.handle()
         return self
 
-    def handle(self) -> bool:
+    def handle(self, force_finish: bool = False) -> bool:
+        if force_finish:
+            return self.force_finish()
+
         self.set_next()
+
         if not self.has_finished():
+            step_name = self.__next_handler.__class__.__name__
+            parent_class, = self.__next_handler.__class__.__bases__
+            parent_name = parent_class.__name__
+            self.get_logger().info(f'[AbstractHandler] [{parent_name}]'
+                                   + f' Executing Step: {step_name}')
             self.__next_handler.handle()
+
         return True
 
     def set_next(self):
@@ -80,13 +92,17 @@ class AbstractHandler(ABC):
 
     def get_logger(self):
         return Logger.instance()
-    
+
     def send_message(self, message: str):
         BotChat.instance().send_text(message)
-        
+
     def get_text_data(self):
         return BotContext.instance().get_text_data()
-    
+
     def has_valid_text_data(self):
         data = self.get_text_data()
         return data is not None and data != '' and data
+
+    def force_finish(self):
+        self.__next_handler is None
+        return True
